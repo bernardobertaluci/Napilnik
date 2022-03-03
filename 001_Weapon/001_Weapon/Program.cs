@@ -1,26 +1,41 @@
-﻿class Weapon
+﻿
+class Weapon
 {
-    public int Damage;
-    public int Bullets;
-
+    private int _damage;
+    private int _bullets;
+    private bool _canFire => _bullets > 0;
     public void Fire(Player player)
     {
-        player.Health -= Damage;
-        Bullets -= 1;
+        if (_canFire == false)
+            throw new ArgumentOutOfRangeException(nameof(_bullets));
+
+        player.TakeDamage(_damage);
     }
 }
-
+ 
 class Player
 {
-    public int Health;
+    private int _health;
+    private bool isAlive => _health > 0;
+
+    public void TakeDamage(int damage)
+    {
+        if (isAlive == false)
+            throw new ArgumentOutOfRangeException(nameof(isAlive));
+
+        _health -= damage;
+    }
 }
 
 class Bot
 {
-    public Weapon Weapon;
+    private Weapon _weapon = new Weapon();
 
     public void OnSeePlayer(Player player)
     {
-        Weapon.Fire(player);
+        if (player == null)
+            throw new ArgumentNullException(nameof(player));
+
+        _weapon.Fire(player);
     }
 }
